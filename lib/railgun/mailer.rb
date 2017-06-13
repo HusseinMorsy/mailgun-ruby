@@ -135,7 +135,11 @@ module Railgun
   # @return [String]
   def extract_body_html(mail)
     begin
-      (mail.html_part || mail).body.decoded || nil
+      if mail.multipart? && mail.html_part
+        mail.html_part.body.decoded
+      else
+        nil
+      end
     rescue
       nil
     end
@@ -149,7 +153,11 @@ module Railgun
   # @return [String]
   def extract_body_text(mail)
     begin
-      (mail.text_part || mail).body.decoded || nil
+      if mail.multipart? && mail.text_part
+        mail.text_part.body.decoded
+      else
+        mail.body.decoded
+      end
     rescue
       nil
     end
